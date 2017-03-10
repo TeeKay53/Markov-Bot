@@ -25,7 +25,7 @@ public class MarkovBot {
         while (predictions == null){
             predictions = chain.nextWords(textSoFar, --lastWordsNumber);
         }
-        System.out.println(predictions);
+
         if (lastWordsNumber == 0){
             int randomRank =(int)(Math.random() * predictions.size());
             int rank = 1;
@@ -42,6 +42,7 @@ public class MarkovBot {
         }
         else {
             Map<String, Double> inOrder = MapUtil.sortByValue(predictions);
+            //create a random integer so that we get the word with that rank.
             int random = (int) (Math.random() * Math.min(randomness, predictions.size()));
             int counter = 0;
             String likelyWord = "";
@@ -50,6 +51,7 @@ public class MarkovBot {
                     likelyWord = (String) entry.getKey();
                 }
             }
+
             textSoFar.add(likelyWord);
             lastWordsNumber++;
 
@@ -64,12 +66,8 @@ public class MarkovBot {
         while (lastWordsNumber != 0){
             next(randomness);
         }
-        String sentence = "";
-        for (String word : textSoFar){
-            sentence += word + " ";
-        }
-        if (textSoFar.size() > 5 && textSoFar.size() < 20) {
-            print();
+        if (textSoFar.size() > 5 && textSoFar.size() < 20 ) {
+            String sentence = process();
             textSoFar.clear();
             return sentence;
         }
@@ -79,20 +77,87 @@ public class MarkovBot {
         }
     }
 
-    public void print() {
+    public void nextProbabilistic(){
+        HashMap<String, Double> predictions = chain.nextWords(textSoFar, lastWordsNumber);
+
+        while (predictions == null){
+            predictions = chain.nextWords(textSoFar, --lastWordsNumber);
+        }
+
+        if (lastWordsNumber == 0){
+            int randomRank =(int)(Math.random() * predictions.size());
+            int rank = 1;
+            for (Map.Entry entry : predictions.entrySet()){
+                if (rank++ == randomRank){
+                    String word = (String) entry.getKey();
+                    if (!word.startsWith("http") && punctuation.indexOf(word.charAt(word.length() - 1)) == -1) {
+                        textSoFar.add((String) entry.getKey());
+                        lastWordsNumber = 1;
+                    }
+                    else next(3);
+                }
+            }
+        }else{
+            //store them in order so that the biggest probabilistic ones are at the beginning.
+            Map<String, Double> inOrder = MapUtil.sortByValue(predictions);
+            int total = 0;
+            for (Map.Entry<String, Double> entry : inOrder.entrySet()){
+                total += entry.getValue();
+            }
+            double sumSoFar = 0;
+            for (Map.Entry<String, Double> entry : inOrder.entrySet()){
+                double thisProb = entry.getValue()/total;
+                sumSoFar += thisProb;
+                entry.setValue(sumSoFar);
+            }
+            String likelyWord = "";
+            double random = Math.random();
+            for (Map.Entry<String, Double> entry : inOrder.entrySet()){
+                if (entry.getValue() > random){
+                    likelyWord = entry.getKey();
+                }
+            }
+            textSoFar.add(likelyWord);
+            lastWordsNumber++;
+
+            if (punctuation.indexOf(likelyWord.charAt(likelyWord.length() - 1)) != -1) {
+                lastWordsNumber = 0;
+            }
+        }
+    }
+
+    public String generateSentenceProbabilistic(){
+        nextProbabilistic();
+        while (lastWordsNumber != 0){
+            nextProbabilistic();
+        }
+        if (textSoFar.size() > 5 && textSoFar.size() < 20 ) {
+            String sentence = process();
+            textSoFar.clear();
+            return sentence;
+        }
+        else {
+            textSoFar.clear();
+            return generateSentenceProbabilistic();
+        }
+    }
+
+    //process it to a sentence
+    public String process() {
         boolean start = true;
+        String sentence = "";
         for (String string : textSoFar) {
             if (start) {
-                System.out.print(string.substring(0, 1).toUpperCase() + string.substring(1) + " ");
+                sentence += string.substring(0, 1).toUpperCase() + string.substring(1) + " ";
                 start = false;
             } else {
-                System.out.print(string + " ");
+                sentence += string + " ";
                 if (string.equals(".")) {
                     start = true;
                 }
             }
         }
-        System.out.println();
+        return sentence;
     }
 
     public void clear(){

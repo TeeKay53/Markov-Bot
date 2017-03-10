@@ -48,7 +48,7 @@ public class Occurrences<T> implements Comparable<Occurrences<T>>{
     }
 
     public String toString(){
-        return instance.toString() + occurences;
+        return "( " + instance.toString() + " -> " +occurences + " )";
     }
 
     @Override

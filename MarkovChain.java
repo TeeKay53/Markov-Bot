@@ -8,8 +8,8 @@ import java.util.*;
 public class MarkovChain<T>{
 
     public HashMap<Occurrences<T>, HashMap> probabilities = new HashMap<>();
-    //Observer pattern intended to update the occurrences to irrelevant.
-    private LinkedList<Occurrences<T>> occurrences = new LinkedList();
+    //Observer pattern intended to update the occurrences to irrelevant when adding new data.
+    LinkedList<Occurrences<T>> occurrences = new LinkedList<>();
     private int wordsCounted;
 
     //how many previous words decide the next word. Usually we would use 3.
