@@ -108,6 +108,7 @@ public class MarkovChain<T>{
 
     private HashMap<T, Double> nextWords(ArrayList<T> stream, int lastWordsNumber,boolean finalMap, HashMap map){
         if (map == null) return null;
+        if (lastWordsNumber > stream.size()) return null;
         if (lastWordsNumber == 0) {
             HashMap<T, Double> toRet = new HashMap();
             Iterator iterator = map.entrySet().iterator();

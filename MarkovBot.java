@@ -36,7 +36,7 @@ public class MarkovBot {
                         textSoFar.add((String) entry.getKey());
                         lastWordsNumber = 1;
                     }
-                    else next(3);
+                    else next(randomness);
                 }
             }
         }
@@ -94,7 +94,7 @@ public class MarkovBot {
                         textSoFar.add((String) entry.getKey());
                         lastWordsNumber = 1;
                     }
-                    else next(3);
+                    else nextProbabilistic();
                 }
             }
         }else{
@@ -128,7 +128,7 @@ public class MarkovBot {
 
     public String generateSentenceProbabilistic(){
         nextProbabilistic();
-        while (lastWordsNumber != 0){
+        while (lastWordsNumber != 0 && textSoFar.size() < 20){
             nextProbabilistic();
         }
         if (textSoFar.size() > 5 && textSoFar.size() < 20 ) {
