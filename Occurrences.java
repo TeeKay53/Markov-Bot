@@ -16,6 +16,11 @@ public class Occurrences<T> implements Comparable<Occurrences<T>>{
         relevant = false;
     }
 
+    public Occurrences(Occurrences<T> source){
+        instance = source.getInstance();
+        relevant = false;
+    }
+
     public double getOccurrences(){return occurences;}
     public void setOccurrences(double setTo){occurences = setTo;}
 
@@ -48,8 +53,9 @@ public class Occurrences<T> implements Comparable<Occurrences<T>>{
     }
 
     public String toString(){
-        return "( " + instance.toString() + " -> " +occurences + " )";
+        return instance.toString() + "->" +occurences + " ";
     }
+
 
     @Override
     public int compareTo(Occurrences<T> o) {

@@ -34,6 +34,11 @@ public class MarkovChain<T>{
 
         while (it.hasNext()){
             mapReference = probabilities;
+            //need to create to occurrences objects so that updates don't clash.
+            for (int i = 0; i < words.length - 2; i++){
+                words[i] = new Occurrences<T>(words[i]);
+                occurrences.add(words[i]);
+            }
             words[words.length - 1] = new Occurrences<T>(it.next());
             occurrences.add(words[words.length - 1]);
 
@@ -76,7 +81,7 @@ public class MarkovChain<T>{
         double accumulator = 0;
         Iterator it = map.entrySet().iterator();
         Map.Entry entry =(Map.Entry) it.next();
-        //Chack only once if it is final
+        //Check only once if it is final
         boolean finalMap = false;
         if (entry.getValue() instanceof Double){
             accumulator += (Double) entry.getValue();
@@ -94,7 +99,7 @@ public class MarkovChain<T>{
 
         return accumulator;
     }
-
+    //This allows you to search through the probability map using the `lastWordsNumber' number of words from the stream list.
     public HashMap<T, Double> nextWords(ArrayList<T> stream, int lastWordsNumber){
         if (lastWordsNumber > wordsCounted) return null;
         boolean finalMap = false;
