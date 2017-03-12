@@ -5,7 +5,7 @@ package MarkovExperiment;
 import java.util.*;
 
 /**
- * A bot that outputs sentences. I can be used to write paragraphs, but the sentences will not be relate one to the other.
+ * Stores the text generated so far and the lastWordsNumber variable, which it decrements when it request the next words and receives a null value
  */
 public class MarkovBot {
     private MarkovChain chain;
@@ -18,6 +18,11 @@ public class MarkovBot {
         lastWordsNumber = 0;
 
     }
+
+    /**
+     * Picks randomly from the most frequent words.
+     * @param randomness
+     */
     public void next(int randomness){
 
         HashMap<String, Double> predictions = chain.nextWords(textSoFar, lastWordsNumber);
@@ -77,6 +82,9 @@ public class MarkovBot {
         }
     }
 
+    /**
+     * Generates a distribution of the words and samples over it.
+     */
     public void nextProbabilistic(){
         HashMap<String, Double> predictions = chain.nextWords(textSoFar, lastWordsNumber);
 
